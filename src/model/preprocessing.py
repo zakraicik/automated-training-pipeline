@@ -1,17 +1,53 @@
 import argparse
 import os
 import pandas as pd
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.model_selection import train_test_split
 
 
 def preprocess(input_data_path, output_data_path):
-    # Load the dataset
-    df = pd.read_csv(input_data_path, header=None)
+    # Specify column names while loading the dataset
+    column_names = [
+        "sepal_length",
+        "sepal_width",
+        "petal_length",
+        "petal_width",
+        "species",
+    ]
+    df = pd.read_csv(input_data_path, header=None, names=column_names)
 
-    # TODO: Any preprocessing you want to apply to the Iris dataset.
-    # This can include normalization, encoding, data cleaning, etc.
+    df = df.dropna(subset=["species"])
 
-    # Save the preprocessed data
-    df.to_csv(output_data_path, header=False, index=False)
+    encoder = LabelEncoder()
+    df["species"] = encoder.fit_transform(df["species"])
+
+    train, test = train_test_split(df, test_size=0.2, random_state=42)
+
+    mean_train = train.mean()
+
+    train.fillna(mean_train, inplace=True)
+    test.fillna(mean_train, inplace=True)
+
+    scaler = StandardScaler()
+    scaler.fit(train[["sepal_length", "sepal_width", "petal_length", "petal_width"]])
+
+    train[
+        ["sepal_length", "sepal_width", "petal_length", "petal_width"]
+    ] = scaler.transform(
+        train[["sepal_length", "sepal_width", "petal_length", "petal_width"]]
+    )
+    test[
+        ["sepal_length", "sepal_width", "petal_length", "petal_width"]
+    ] = scaler.transform(
+        test[["sepal_length", "sepal_width", "petal_length", "petal_width"]]
+    )
+
+    train.to_csv(
+        os.path.join(output_data_path, "train_data.csv"), header=False, index=False
+    )
+    test.to_csv(
+        os.path.join(output_data_path, "test_data.csv"), header=False, index=False
+    )
 
 
 if __name__ == "__main__":
