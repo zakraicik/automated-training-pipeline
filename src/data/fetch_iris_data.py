@@ -11,7 +11,7 @@ def lambda_handler(event, context):
 
     # Assuming the data is small enough to fit into memory
     s3.put_object(
-        Bucket="automated-training-pipeline-example",
+        Bucket="automated-training-pipeline",
         Key="data/iris.data",
         Body=response.content,
     )
