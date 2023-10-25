@@ -3,10 +3,13 @@ import os
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def preprocess(input_data_path, output_data_path):
-    # Specify column names while loading the dataset
     column_names = [
         "sepal_length",
         "sepal_width",
@@ -14,6 +17,9 @@ def preprocess(input_data_path, output_data_path):
         "petal_width",
         "species",
     ]
+
+    logger.info(f"input_data_path:  {input_data_path}:")
+
     df = pd.read_csv(input_data_path, header=None, names=column_names)
 
     df = df.dropna(subset=["species"])
