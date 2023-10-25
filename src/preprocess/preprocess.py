@@ -27,6 +27,8 @@ def preprocess(input_data_path, output_data_path):
     encoder = LabelEncoder()
     df["species"] = encoder.fit_transform(df["species"])
 
+    df = df[["species"] + [col for col in df if col != "species"]]
+
     train, test = train_test_split(df, test_size=0.2, random_state=42)
 
     mean_train = train.mean()
